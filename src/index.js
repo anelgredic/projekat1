@@ -5,11 +5,13 @@ const Category = require("./models/category");
 const CategoryProduct = require("./models/categoryProduct");
 
 const productRouter = require("./routers/product");
+const categoryRouter = require("./routers/category");
 
 const app = express();
 
 app.use(express.json());
 app.use(productRouter);
+app.use(categoryRouter);
 
 const port = process.env.PORT;
 
