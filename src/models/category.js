@@ -17,4 +17,13 @@ const Category = sequelize.define(
   { timestamps: true }
 );
 
+// Sinhronizacija modela sa bazom podataka
+Category.sync({ alter: true }) // Ovo će ažurirati tabelu ako već postoji
+  .then(() => {
+    console.log("Model Category je sinhronizovan sa bazom podataka.");
+  })
+  .catch((err) => {
+    console.error("Greška prilikom sinhronizacije modela Category:", err);
+  });
+
 module.exports = Category;

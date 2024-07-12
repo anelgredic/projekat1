@@ -6,37 +6,49 @@ const Category = require("../models/category");
 const CategoryProduct = sequelize.define(
   "CategoryProduct",
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-      allowNull: false,
-    },
     productId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Product,
+        model: "Products",
         key: "id",
       },
+      primaryKey: true,
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
-      allowNull: false,
     },
     categoryId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Category,
+        model: "Categories",
         key: "id",
       },
+      primaryKey: true,
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
-      allowNull: false,
     },
   },
   { timestamps: false }
 );
 
-Product.belongsToMany(Category, { through: CategoryProduct, allowNull: false });
-Category.belongsToMany(Product, { through: CategoryProduct, allowNull: false });
+Product.belongsToMany(Category, {
+  through: CategoryProduct,
+  foreignKey: "productId",
+});
+Category.belongsToMany(Product, {
+  through: CategoryProduct,
+  foreignKey: "categoryId",
+});
+
+// Sinhronizacija modela sa bazom podataka
+CategoryProduct.sync({ alter: true }) // Ovo će ažurirati tabelu ako već postoji
+  .then(() => {
+    console.log("Model CategoryProduct je sinhronizovan sa bazom podataka.");
+  })
+  .catch((err) => {
+    console.error(
+      "Greška prilikom sinhronizacije modela CategoryProduct:",
+      err
+    );
+  });
 
 module.exports = CategoryProduct;

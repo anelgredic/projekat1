@@ -84,4 +84,31 @@ router.delete("/categories/:id", async (req, res) => {
   } catch (e) {}
 });
 
+router.patch(
+  "/categories/:categoryId/products/:productId",
+  async (req, res) => {
+    try {
+      const { categoryId, productId } = req.params;
+      const category = await Category.findByPk(categoryId);
+      const product = await Product.findByPk(productId);
+
+      if (!category || !product) {
+        return res
+          .status(404)
+          .send({ error: "Category or Product not found!" });
+      }
+
+      const categoryProduct = await CategoryProduct.create({
+        productId,
+        categoryId,
+      });
+
+      res.status(201).send(categoryProduct);
+    } catch (e) {
+      console.error("Error:", e);
+      res.status(500).send();
+    }
+  }
+);
+
 module.exports = router;

@@ -96,22 +96,39 @@ router.patch(
       const product = await Product.findByPk(productId);
       const category = await Category.findByPk(categoryId);
 
-      console.log("greska");
-
       if (!product || !category) {
         return res
           .status(404)
           .send({ error: "Product or Category not found!" });
       }
 
-      const categoryProduct = await CategoryProduct(productId, categoryId);
+      const categoryProduct = await CategoryProduct.create({
+        productId,
+        categoryId,
+      });
 
-      console.log(categoryProduct);
       res.status(201).send(categoryProduct);
     } catch (e) {
       res.status(500).send();
     }
   }
 );
+
+// Dohvatanje kategorija za proizvod
+
+router.get("/products/:productId/categories", async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.productId, {
+      include: Category,
+    });
+    if (!product) {
+      return res.status(404).send();
+    }
+
+    res.send(product.Categories);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 module.exports = router;
